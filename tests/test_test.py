@@ -16,7 +16,7 @@ def subMany(x, y):
 
 class TestAdd(UT.TestCase):
   def testAddOne(self):
-    self.assertEqual(addOne(2), 3)
+    self.assertEqual(addOne(2), 5)
 
   def testAdd(self):
     self.assertEqual(addMany(2, 3), 5)
