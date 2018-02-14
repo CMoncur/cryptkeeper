@@ -18,7 +18,10 @@ setup(
   packages = [ "src" ],
 
   # Core Dependencies
-  install_requires = [],
+  install_requires = [
+    "beautifulsoup4",
+    "requests"
+  ],
 
   # Dev/Test Dependencies
   extras_require = {
