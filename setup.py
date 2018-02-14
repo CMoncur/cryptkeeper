@@ -15,7 +15,7 @@ setup(
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.6"
   ],
-  packages = [ "src" ],
+  packages = [ "proto_scrape" ],
 
   # Core Dependencies
   install_requires = [
