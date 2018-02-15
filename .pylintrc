@@ -125,7 +125,7 @@ missing-member-max-choices=1
 
 [VARIABLES]
 additional-builtins=
-allow-global-unused-variables=no
+allow-global-unused-variables=yes
 callbacks=cb_,
           _cb
 dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
