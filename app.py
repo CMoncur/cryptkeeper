@@ -16,7 +16,7 @@ or
 def scrape(url):
   """ Initiate scraper """
   hi = Scrape(url)
-  hi.printUrl()
+  hi.printData()
 
 #Entry point
 def main(args):

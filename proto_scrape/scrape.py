@@ -1,7 +1,7 @@
 """ Main scraper logic """
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 from requests import get
-from requests.exceptions import RequestException
+# from requests.exceptions import RequestException
 
 class Scrape:
   """ Scrape web page from supplied URL """
@@ -9,7 +9,15 @@ class Scrape:
   def __init__(self, url):
     """ Fetch URL """
     self.url = url
-    print("hi")
+    self.data = get(url)
+
+  def printData(self):
+    """ Print fetched data"""
+    if self.data.status_code == 200:
+      print(self.data.content)
+
+    else:
+      print("Request failed: ", self.data.status_code)
 
   def printUrl(self):
     """ Print URL to be scraped """
