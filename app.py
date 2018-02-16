@@ -3,7 +3,7 @@
 import sys
 
 # Internal Dependencies
-from proto_scrape.scrape import Scrape
+from proto_scrape.scrape import Scrape, ScrapeIcoDrops
 
 help_docs = """
 Error: Invalid command line argument passed.
@@ -18,9 +18,9 @@ def determineScraper(url):
   Determine which scraper to use. If URL is not recognized, simply print the
   title text of whichever URL given.
   """
-  if url == "https://icodrops.com/":
-    # icodrops = ScrapeIcoDrops
-    print("hi")
+  if url == "https://icodrops.com/" or url == "https://icodrops.com":
+    icodrops = ScrapeIcoDrops(url)
+    icodrops.fetchInternalUrls()
 
   else:
     print("URL not recognized. I will not database the information scraped.")
