@@ -1,7 +1,6 @@
 """ Main scraper logic """
-# from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 from requests import get
-# from requests.exceptions import RequestException
 
 class Scrape:
   """ Scrape web page from supplied URL """
@@ -10,10 +9,14 @@ class Scrape:
     """ Fetch URL """
     self.url = url
     self.data = get(url)
+    self.status = self.data.status_code
+    self.headers = self.data.headers['Content-Type']
+    if self.status == 200 and "text/html" in self.headers:
+      self.html = self.data.content
 
   def printData(self):
     """ Print fetched data"""
-    if self.data.status_code == 200:
+    if self.status == 200 and "text/html" in self.headers:
       print(self.data.content)
 
     else:
@@ -23,5 +26,8 @@ class Scrape:
     """ Print URL to be scraped """
     print(self.url)
 
-  # def __responseStatus(self, ):
-  #   """ Check if response is good """
+  def getHeaderText(self):
+    """ Get h1 text from site """
+    html = BeautifulSoup(self.html, 'html.parser')
+    for h1 in html.select('h1'):
+      print(h1.text)
