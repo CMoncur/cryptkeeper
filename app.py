@@ -20,7 +20,7 @@ def determineScraper(url):
   """
   if url == "https://icodrops.com/" or url == "https://icodrops.com":
     icodrops = ScrapeIcoDrops(url)
-    icodrops.fetchInternalUrls()
+    icodrops.fetchData()
 
   else:
     print("URL not recognized. I will not database the information scraped.")
