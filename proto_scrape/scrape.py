@@ -14,6 +14,10 @@ class Scrape:
     if self.status == 200 and "text/html" in self.headers:
       self.html = self.data.content
 
+    else:
+      error_text = "Could not scrape " + url + ": " + self.status
+      raise RuntimeError(error_text)
+
   def printData(self):
     """ Print fetched data"""
     if self.status == 200 and "text/html" in self.headers:
@@ -26,8 +30,13 @@ class Scrape:
     """ Print URL to be scraped """
     print(self.url)
 
-  def getHeaderText(self):
-    """ Get h1 text from site """
-    html = BeautifulSoup(self.html, 'html.parser')
-    for h1 in html.select('h1'):
-      print(h1.text)
+  def fetchTitleText(self):
+    """ Get title text from site """
+    html = BeautifulSoup(self.html, "html.parser")
+    for title in html.select("title"):
+      print(title.text)
+
+# class ScrapeIcoDrops(Scrape):
+#   """ Scraper for IcoDrops """
+#
+#   def fetch

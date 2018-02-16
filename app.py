@@ -13,10 +13,19 @@ or
   -u VALID_URL
 """
 
-def scrape(url):
-  """ Initiate scraper """
-  hi = Scrape(url)
-  hi.getHeaderText()
+def determineScraper(url):
+  """
+  Determine which scraper to use. If URL is not recognized, simply print the
+  title text of whichever URL given.
+  """
+  if url == "https://icodrops.com/":
+    # icodrops = ScrapeIcoDrops
+    print("hi")
+
+  else:
+    print("URL not recognized. I will not database the information scraped.")
+    general = Scrape(url)
+    general.fetchTitleText()
 
 #Entry point
 def main(args):
@@ -25,7 +34,7 @@ def main(args):
     print(help_docs)
 
   elif (args[0] == "--url" or args[0] == "-u") and isinstance(args[1], str):
-    scrape(args[1])
+    determineScraper(args[1])
 
   else:
     print(help_docs)
