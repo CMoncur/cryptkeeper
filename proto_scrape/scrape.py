@@ -1,6 +1,7 @@
 """ Main scraper logic """
 from bs4 import BeautifulSoup
 from requests import get
+from .util import progressBar
 
 class Scrape:
   """ Scrape web page from supplied URL """
@@ -44,6 +45,34 @@ class ScrapeIcoDrops(Scrape):
     self.ico_aggregate_urls = []
 
   # Private ScrapeIcoDrops Methods
+  def __fetchIcoData(self):
+    for idx, url in enumerate(self.ico_urls):
+      data = get(url)
+      if data.status_code == 200 and "html" in data.headers['Content-Type']:
+        soup = BeautifulSoup(data.content, "html.parser")
+        ico_main_info = soup.find("div", attrs = { "class" : "ico-main-info" })
+        ico_name = ico_main_info.find("h3").text
+        progressBar(idx, len(self.ico_urls), 25, \
+          ("Harvesting ICO: " + ico_name))
+
+      else:
+        # TODO: Normalize the way errors are thrown
+        error_text = "Could not scrape " + url + ": " + self.status
+        raise RuntimeError(error_text)
+
+  def __fetchIcoUrls(self, url):
+    # TODO: Make a proper URL fetch utility
+    data = get(url)
+    if data.status_code == 200 and "html" in data.headers['Content-Type']:
+      soup = BeautifulSoup(data.content, "html.parser")
+      for a in soup.findAll("a", attrs = { "id" : "ccc" }):
+        self.ico_urls.append(a["href"])
+
+    else:
+      # TODO: Normalize the way errors are thrown
+      error_text = "Could not scrape " + url + ": " + self.status
+      raise RuntimeError(error_text)
+
   def __fetchInternalUrls(self):
     """ Fetch URLs of ICOs to be scraped """
     for i in self.soup.findAll("div", attrs = { "id" : "view_all" }):
@@ -51,21 +80,11 @@ class ScrapeIcoDrops(Scrape):
       self.ico_aggregate_urls.append(self.url + edge)
 
     for url in self.ico_aggregate_urls:
-      # TODO: Make a proper URL fetch utility
-      data = get(url)
-      if data.status_code == 200 and "html" in data.headers['Content-Type']:
-        soup = BeautifulSoup(data.content, "html.parser")
-        for a in soup.findAll("a", attrs = { "id" : "ccc" }):
-          self.ico_urls.append(a["href"])
-
-      else:
-        # TODO: Normalize the way errors are thrown
-        error_text = "Could not scrape " + url + ": " + self.status
-        raise RuntimeError(error_text)
+      self.__fetchIcoUrls(url)
 
 
   # Public ScrapeIcoDrops Methods
   def fetchData(self):
     """ Fetch data from IcoDrops """
     self.__fetchInternalUrls()
-    print(self.ico_urls)
+    self.__fetchIcoData()
