@@ -3,7 +3,7 @@
 import sys
 
 # Internal Dependencies
-from proto_scrape.scrape import Scrape, ScrapeIcoDrops
+from cryptkeeper.scrape import Scrape, ScrapeIcoDrops
 
 help_docs = """
 Error: Invalid command line argument passed.
