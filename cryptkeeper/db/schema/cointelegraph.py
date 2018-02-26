@@ -1,6 +1,6 @@
 # pylint: disable=R0903
 
-"""Coin Schedule SqlAlchemy Schema"""
+"""Coin Telegraph SqlAlchemy Schema"""
 
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, create_engine
@@ -12,9 +12,9 @@ PSQL_CONN = "postgresql+psycopg2://test:test@localhost:5432/cryptkeeper_raw"
 Base = declarative_base()
 Engine = create_engine(PSQL_CONN)
 
-class CoinSchedule(Base):
-  """Coin Schedule Schema"""
-  __tablename__ = "coinschedule"
+class CoinTelegraph(Base):
+  """Coin Telegraph Schema"""
+  __tablename__ = "cointelegraph"
 
   id = Column( Integer, primary_key = True, autoincrement = True )
   created = Column( TIMESTAMP, nullable = False, default = datetime.now )
@@ -23,5 +23,3 @@ class CoinSchedule(Base):
   end = Column( TIMESTAMP, nullable = False )
   site = Column( String(100), nullable = False )
   description = Column( TEXT, nullable = False )
-  token_symbol = Column( String(20), nullable = False )
-  platform = Column( String(20), nullable = False )
