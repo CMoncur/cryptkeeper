@@ -17,8 +17,10 @@ depends_on = ${repr(depends_on)}
 
 
 def upgrade():
-    ${upgrades if upgrades else "pass"}
+  """Migration Up"""
+  ${upgrades if upgrades else "pass"}
 
 
 def downgrade():
-    ${downgrades if downgrades else "pass"}
+  """Migration Down"""
+  ${downgrades if downgrades else "pass"}
