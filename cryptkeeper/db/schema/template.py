@@ -3,9 +3,9 @@
 """Template SqlAlchemy Schema"""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import BOOLEAN, Column, create_engine, FLOAT, Integer, \
+  String, TEXT, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.types import BOOLEAN, TEXT, TIMESTAMP
 
 # TODO: Place connection string in environments file
 PSQL_CONN = "postgresql+psycopg2://test:test@localhost:5432/cryptkeeper_raw"
@@ -24,7 +24,7 @@ class Template(Base):
   site = Column( String(100), nullable = False )
   description = Column( TEXT, nullable = False )
   report = Column( TEXT, nullable = False )
-  price = Column( String(20), nullable = False )
+  price = Column( FLOAT(20), nullable = False )
   raised = Column( BOOLEAN, nullable = False )
   presale_start = Column( TIMESTAMP, nullable = False )
   presale_end = Column( TIMESTAMP, nullable = False )
