@@ -19,7 +19,7 @@ branch_labels = ${repr(branch_labels)}
 depends_on = ${repr(depends_on)}
 
 # Table Name Constant
-TABLE =
+TABLE = ""
 
 def upgrade():
   """Migration Up"""
