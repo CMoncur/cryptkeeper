@@ -19,10 +19,11 @@ setup(
 
   # Core Dependencies
   install_requires = [
+    "alembic",
     "beautifulsoup4",
     "psycopg2",
-    "sqlalchemy",
-    "requests"
+    "requests",
+    "sqlalchemy"
   ],
 
   # Dev/Test Dependencies
