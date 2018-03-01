@@ -23,7 +23,7 @@ branch_labels = None
 depends_on = None
 
 # Table Name Constant
-TABLE = ""
+TABLE = "icolist"
 
 def upgrade():
   """Migration Up"""
