@@ -34,7 +34,7 @@ setup(
 
   # Scripts
   scripts = [
-    "bin/migration-down",
-    "bin/migration-up"
+    "bin/migrate-down",
+    "bin/migrate-up"
   ]
 )
