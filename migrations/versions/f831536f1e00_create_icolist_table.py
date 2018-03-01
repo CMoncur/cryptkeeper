@@ -1,6 +1,6 @@
 # pylint: disable=E1101
 
-"""create icolist table
+"""Create Icolist Table
 
 Revision ID: f831536f1e00
 Revises: 7297301c6e2e
