@@ -13,7 +13,7 @@ from datetime import datetime
 
 # Other Dependencies
 from alembic import op
-from sqlalchemy import Column, Integer, String, TEXT, TIMESTAMP
+from sqlalchemy import Column, Integer, TIMESTAMP
 
 
 # Revision identifiers, used by Alembic.
@@ -30,14 +30,7 @@ def upgrade():
   op.create_table(
     TABLE,
     Column( "id", Integer, primary_key = True, autoincrement = True ),
-    Column( "created", TIMESTAMP, nullable = False, default = datetime.now ),
-    Column( "name", String(100), nullable = False ),
-    Column( "start", TIMESTAMP, nullable = False ),
-    Column( "end", TIMESTAMP, nullable = False ),
-    Column( "site", String(100), nullable = False ),
-    Column( "description", TEXT, nullable = False ),
-    Column( "presale_start", TIMESTAMP, nullable = False ),
-    Column( "presale_end", TIMESTAMP, nullable = False )
+    Column( "created", TIMESTAMP, nullable = False, default = datetime.now )
   )
 
 
