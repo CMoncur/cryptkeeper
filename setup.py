@@ -17,6 +17,11 @@ setup(
   ],
   packages = [ "cryptkeeper" ],
 
+  # Entry Point
+  entry_points = {
+    "console_scripts": [ "cryptkeeper = cryptkeeper.__main__:main" ]
+  },
+
   # Core Dependencies
   install_requires = [
     "alembic",
