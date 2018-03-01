@@ -30,5 +30,11 @@ setup(
   extras_require = {
     "dev": [],
     "test": [],
-  }
+  },
+
+  # Scripts
+  scripts = [
+    "bin/migration-down",
+    "bin/migration-up"
+  ]
 )
