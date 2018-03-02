@@ -1,11 +1,17 @@
-"""Base Excavator Logic"""
+""" Base Excavator Logic """
 
+# Core Dependencies
+import asyncio as Async
+import concurrent.futures as Futures
+
+# External Dependencies
 import requests as Request
 import requests.exceptions as HttpError
 
-# Private Functions
+
+# Private Entities
 def __fetch(url):
-  """Basic HTTP request handler"""
+  """ Basic HTTP request handler """
   try:
     res = Request.get(url)
     return {
@@ -27,12 +33,13 @@ def __fetch(url):
     print("Too many redirects fetching %s: %s" % (url, err))
 
 
+# Public Entities
 class Excavator:
   """ Scrape web page from supplied URL """
 
   def __init__(self, urls, run_async = False, threads = 20):
-    self.urls = []
     self.data = []
+    self.urls = []
 
     for url in urls:
       if url.endswith("/"):
@@ -42,26 +49,40 @@ class Excavator:
         self.urls.append(url)
 
     if run_async:
-      self.__fetchParallel()
+      loop = Async.get_event_loop()
+      loop.run_until_complete(self.__fetchParallel(threads))
 
     else:
       self.__fetchSeries()
 
 
   # Private Methods
-  def __fetchParallel(self):
-    pass
+  async def __fetchParallel(self, threads):
+    """ Make HTTP requests for each URL in parallel (asynchronous) """
+    with Futures.ThreadPoolExecutor(max_workers = threads) as ex:
+      loop = Async.get_event_loop()
+      data = [ loop.run_in_executor(ex, __fetch, url) for url in self.urls ]
+
+      self.data = await Async.gather(data)
+
 
   def __fetchSeries(self):
-    pass
+    """ Make HTTP requests for each URL in series (synchronous) """
+    for url in self.urls:
+      self.data.append(__fetch(url))
 
 
   # Public Methods
-  def status(self):
-    """Returns status code of fetch attempt on supplied URL"""
-    return self.status
+  def errors(self):
+    """ Returns all errors within raw data list """
+    errs = []
+
+    for data in self.data:
+      errs.append(data["error"])
+
+    return errs
 
 
   def externalUrls(self):
-    """Returns supplied URL"""
+    """ Returns supplied URL """
     return self.urls
