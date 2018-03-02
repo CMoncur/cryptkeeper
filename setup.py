@@ -1,4 +1,5 @@
 """ Base setup script for cryptkeeper """
+
 from setuptools import setup
 
 setup(
