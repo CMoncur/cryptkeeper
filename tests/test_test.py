@@ -1,4 +1,4 @@
-# pylint: skip-file
+# pylint: disable=C0111
 """ General unit tests """
 import unittest as UT
 
