@@ -4,7 +4,7 @@
 import sys
 
 # Internal Dependencies
-from quarry.node.icodrops import IcoDrops
+from cryptkeeper.quarry.node.icodrops import IcoDrops
 
 def main():
   """ Entry function """

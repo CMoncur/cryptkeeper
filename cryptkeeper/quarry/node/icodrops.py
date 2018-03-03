@@ -4,7 +4,7 @@
 # from bs4 import BeautifulSoup
 
 # Internal Dependencies
-from quarry.excavator import Excavator
+from cryptkeeper.quarry.excavator import Excavator
 
 
 # Public Entities
