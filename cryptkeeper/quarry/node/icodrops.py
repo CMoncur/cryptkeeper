@@ -4,7 +4,7 @@
 # from bs4 import BeautifulSoup
 
 # Internal Dependencies
-from ..excavator import Excavator
+from quarry.excavator import Excavator
 
 
 # Public Entities

@@ -8,7 +8,7 @@ from quarry.node.icodrops import IcoDrops
 
 def main():
   """ Entry function """
-  urls = [ sys.argv[1] ] * 1000
+  urls = [ sys.argv[1] ] * 100
   hello = IcoDrops(urls)
   print(hello.errors())
 

@@ -10,14 +10,16 @@ import requests.exceptions as HttpError
 
 
 # Private Entities
-def __fetch(url):
+def fetch(url):
   """ Basic HTTP request handler """
   try:
     res = Request.get(url)
+
     return {
-      "content" : res.data.content,
-      "status" : res.data.status_code,
-      "error" : None
+      "content" : res.content,
+      "error" : None,
+      "status" : res.status_code,
+      "type" : res.headers["Content-Type"]
     }
 
   except HttpError.ConnectionError as err:
@@ -37,7 +39,7 @@ def __fetch(url):
 class Excavator:
   """ Scrape web page from supplied URL """
 
-  def __init__(self, urls, run_async = False, threads = 20):
+  def __init__(self, urls, run_async = False, threads = 4):
     self.data = []
     self.urls = []
 
@@ -61,15 +63,15 @@ class Excavator:
     """ Make HTTP requests for each URL in parallel (asynchronous) """
     with Futures.ThreadPoolExecutor(max_workers = threads) as ex:
       loop = Async.get_event_loop()
-      data = [ loop.run_in_executor(ex, __fetch, url) for url in self.urls ]
+      data = [ loop.run_in_executor(ex, fetch, url) for url in self.urls ]
 
-      self.data = await Async.gather(data)
+      self.data = await Async.gather(*data)
 
 
   def __fetchSeries(self):
     """ Make HTTP requests for each URL in series (synchronous) """
     for url in self.urls:
-      self.data.append(__fetch(url))
+      self.data.append(fetch(url))
 
 
   # Public Methods

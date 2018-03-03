@@ -1,6 +1,6 @@
 """ Base setup script for cryptkeeper """
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
   name = "cryptkeeper",
@@ -16,7 +16,7 @@ setup(
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.6"
   ],
-  packages = [ "cryptkeeper" ],
+  packages = find_packages(),
 
   # Entry Point
   entry_points = {
