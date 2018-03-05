@@ -82,7 +82,7 @@ class Excavator:
     for data in self.data:
       errs.append(data["error"])
 
-    return errs
+    return list(filter(lambda x: x != None, errs))
 
 
   def externalUrls(self):
