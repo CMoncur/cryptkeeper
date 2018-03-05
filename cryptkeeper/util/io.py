@@ -1,5 +1,6 @@
-""" Miscellaneous utility functions """
+""" Miscellaneous IO utility functions """
 from sys import stdout
+
 
 def progressBar(current, total, bars = 50, text = ""):
   """ Render a progress bar to the console """
