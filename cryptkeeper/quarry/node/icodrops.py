@@ -15,14 +15,21 @@ class IcoDrops(Excavator):
   URL = "https://icodrops.com"
 
   def __init__(self):
-    super(IcoDrops, self).__init__([ self.URL ], True)
-    self.ico_list_urls = []
-    self.ico_urls = []
+    super(IcoDrops, self).__init__(self.__fetchIcoUrls())
 
-    self.__fetchIcoUrls()
+    if not self.urls:
+      print("IcoDrops: No URLs to mine...")
+
+    else:
+      self.__fetchIcoData()
 
 
   # Private Methods
+  def __fetchIcoData(self):
+    # USE THESE URLS AS SUPER FOR INIT
+    print(len(self.urls))
+
+
   def __fetchIcoUrls(self):
     """
     Within IcoDrops, there are three main columns -- 1) Active ICO,
@@ -33,21 +40,23 @@ class IcoDrops(Excavator):
     Utilizing each of the gathered ICO List URLs, fetch the URLS of each
     individual ICO, and append them to a list.
     """
-    if Util.isHtml(self.data[0]):
-      soup = BeautifulSoup(self.data[0]["content"], "html.parser")
+    icodrops_home = Excavator([ self.URL ])
+    ico_list_urls = []
+    ico_urls = []
+
+    if Util.isHtml(icodrops_home.data[0]):
+      soup = BeautifulSoup(icodrops_home.data[0]["content"], "html.parser")
 
       for s in soup.findAll("div", attrs = { "id" : "view_all" }):
-        self.ico_list_urls.append(self.URL + s.find("a")["href"])
+        ico_list_urls.append(self.URL + s.find("a")["href"])
 
-    if not self.ico_list_urls:
-      print("IcoDrops: No ICO List URLs exist")
+    ico_lists = Excavator(ico_list_urls, True)
 
-    else:
-      ico_lists = Excavator(self.ico_list_urls, True)
+    for data in ico_lists.data:
+      if Util.isHtml(data):
+        soup = BeautifulSoup(data["content"], "html.parser")
 
-      for data in ico_lists.data:
-        if Util.isHtml(data):
-          soup = BeautifulSoup(data["content"], "html.parser")
+        for a in soup.findAll("a", attrs = { "id" : "ccc" }):
+          ico_urls.append(a["href"])
 
-          for a in soup.findAll("a", attrs = { "id" : "ccc" }):
-            self.ico_urls.append(a["href"])
+    return ico_urls

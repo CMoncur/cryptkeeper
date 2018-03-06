@@ -1,6 +1,7 @@
 """ Base Excavator Logic """
 
 # Core Dependencies
+from multiprocessing import cpu_count
 import asyncio as Async
 import concurrent.futures as Futures
 
@@ -47,7 +48,7 @@ def fetch(url):
 class Excavator:
   """ Scrape web page from supplied URL """
 
-  def __init__(self, urls, run_async = False, threads = 4):
+  def __init__(self, urls, run_async = False, threads = cpu_count()):
     self.data = []
     self.urls = []
 
@@ -91,9 +92,9 @@ class Excavator:
     for data in self.data:
       errs.append(data["error"])
 
-    return list(filter(lambda x: x is None, errs))
+    return list(filter(lambda x: x is not None, errs))
 
 
   def externalUrls(self):
     """ Returns supplied URL """
-    return self.urls
+    return len(self.urls)
