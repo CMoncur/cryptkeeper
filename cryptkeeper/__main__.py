@@ -9,7 +9,7 @@ from cryptkeeper.quarry.node.icodrops import IcoDrops
 def main():
   """ Entry function """
   hello = IcoDrops()
-  print(hello.errors())
+  print(hello.ico_data)
 
 if __name__ == "__main__":
   main()

@@ -34,6 +34,7 @@ setup(
   install_requires = [
     "alembic",
     "beautifulsoup4",
+    "cfscrape",
     "psycopg2",
     "requests",
     "sqlalchemy"

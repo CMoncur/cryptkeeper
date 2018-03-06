@@ -8,6 +8,13 @@ from cryptkeeper.quarry.excavator import Excavator
 import cryptkeeper.util.util as Util
 
 
+# Scraping Functions
+def scrapeName(soup):
+  """ Scrapes ICO name from ICODrops listing """
+  main_info = soup.find("div", attrs = { "class" : "ico-main-info" })
+  return main_info.find("h3").text
+
+
 # Public Entities
 class IcoDrops(Excavator):
   """ ICODrops Excavator Class """
@@ -15,7 +22,11 @@ class IcoDrops(Excavator):
   URL = "https://icodrops.com"
 
   def __init__(self):
-    super(IcoDrops, self).__init__(self.__fetchIcoUrls())
+    # TODO: Uncomment when ready for real deal
+    # super(IcoDrops, self).__init__(self.__fetchIcoUrls())
+    self.ico_data = []
+    yeah = self.__fetchIcoUrls()
+    super(IcoDrops, self).__init__([ yeah[0] ], True, True)
 
     if not self.urls:
       print("IcoDrops: No URLs to mine...")
@@ -26,8 +37,15 @@ class IcoDrops(Excavator):
 
   # Private Methods
   def __fetchIcoData(self):
-    # USE THESE URLS AS SUPER FOR INIT
-    print(len(self.urls))
+    # Filter out non-HTML responses
+    self.data = list(filter(Util.isHtml, self.data))
+
+    for data in self.data:
+      soup = BeautifulSoup(data["content"], "html.parser")
+
+      self.ico_data.append({
+        "name" : scrapeName(soup)
+      })
 
 
   def __fetchIcoUrls(self):
@@ -40,7 +58,7 @@ class IcoDrops(Excavator):
     Utilizing each of the gathered ICO List URLs, fetch the URLS of each
     individual ICO, and append them to a list.
     """
-    icodrops_home = Excavator([ self.URL ])
+    icodrops_home = Excavator([ self.URL ], True, True)
     ico_list_urls = []
     ico_urls = []
 
@@ -50,7 +68,7 @@ class IcoDrops(Excavator):
       for s in soup.findAll("div", attrs = { "id" : "view_all" }):
         ico_list_urls.append(self.URL + s.find("a")["href"])
 
-    ico_lists = Excavator(ico_list_urls, True)
+    ico_lists = Excavator(ico_list_urls, True, True)
 
     for data in ico_lists.data:
       if Util.isHtml(data):

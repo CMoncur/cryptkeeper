@@ -6,6 +6,7 @@ import asyncio as Async
 import concurrent.futures as Futures
 
 # External Dependencies
+import cfscrape as CfScrape
 import requests as Request
 import requests.exceptions as HttpError
 
@@ -14,7 +15,7 @@ import cryptkeeper.util.io as Io
 
 
 # Private Entities
-def fetch(url):
+def fetch(url, cf, session):
   """
   Basic HTTP request handler
 
@@ -22,7 +23,11 @@ def fetch(url):
   mine data in the event of a bad response from a get request.
   """
   try:
-    res = Request.get(url)
+    if cf:
+      res = session.get(url)
+
+    else:
+      res = Request.get(url)
 
     return {
       "content" : res.content,
@@ -48,7 +53,9 @@ def fetch(url):
 class Excavator:
   """ Scrape web page from supplied URL """
 
-  def __init__(self, urls, run_async = False, threads = cpu_count()):
+  def __init__(self, urls, cf, run_async, threads = cpu_count()):
+    self.cf = cf
+    self.cf_session = CfScrape.create_scraper()
     self.data = []
     self.urls = []
 
@@ -72,7 +79,10 @@ class Excavator:
     """ Make HTTP requests for each URL in parallel (asynchronous) """
     with Futures.ThreadPoolExecutor(max_workers = threads) as ex:
       loop = Async.get_event_loop()
-      data = [ loop.run_in_executor(ex, fetch, url) for url in self.urls ]
+      data = [
+        loop.run_in_executor(ex, fetch, url, self.cf, self.cf_session)
+        for url in self.urls
+      ]
 
       self.data = await Async.gather(*data)
 
@@ -80,7 +90,7 @@ class Excavator:
   def __fetchSeries(self):
     """ Make HTTP requests for each URL in series (synchronous) """
     for i, url in enumerate(self.urls):
-      self.data.append(fetch(url))
+      self.data.append(fetch(url, self.cf, self.cf_session))
       Io.progressBar(i, len(self.urls), 50, "Fetching URLs...")
 
 
