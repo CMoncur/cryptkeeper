@@ -8,10 +8,18 @@ import concurrent.futures as Futures
 import requests as Request
 import requests.exceptions as HttpError
 
+# Internal Dependencies
+import cryptkeeper.util.io as Io
+
 
 # Private Entities
 def fetch(url):
-  """ Basic HTTP request handler """
+  """
+  Basic HTTP request handler
+
+  Exceptions must be caught and handled so that cryptkeeper continues to
+  mine data in the event of a bad response from a get request.
+  """
   try:
     res = Request.get(url)
 
@@ -70,8 +78,9 @@ class Excavator:
 
   def __fetchSeries(self):
     """ Make HTTP requests for each URL in series (synchronous) """
-    for url in self.urls:
+    for i, url in enumerate(self.urls):
       self.data.append(fetch(url))
+      Io.progressBar(i, len(self.urls), 50, "Fetching URLs...")
 
 
   # Public Methods
@@ -82,7 +91,7 @@ class Excavator:
     for data in self.data:
       errs.append(data["error"])
 
-    return list(filter(lambda x: x != None, errs))
+    return list(filter(lambda x: x is None, errs))
 
 
   def externalUrls(self):
