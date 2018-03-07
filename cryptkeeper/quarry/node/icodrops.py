@@ -26,11 +26,32 @@ def scrapeName(soup):
     .find("div", attrs = { "class" : "ico-main-info" }) \
     .find("h3").text
 
+
+def scrapePrice(soup):
+  """ Scrapes ICO proce from ICODrops listing """
+  li = soup.findAll("li")
+
+
+  for idx, yeah in enumerate(li):
+    span = yeah.find("span", attrs = { "class" : "grey" })
+
+    if span and "Token Price" in span.text:
+      # Return only first match
+      return li[idx].text \
+        .split(" = ")[-1] \
+        .split(" (")[0] \
+        .replace("\xa0", " ") # Replace space character code with a space...
+
+  # Catchall in the event no matches are found
+  return None
+
+
 def scrapeSite(soup):
   """ Scrapes ICO website URL from ICODrops listing """
   return soup \
     .find("div", attrs = { "class" : "ico-right-col" }) \
     .find("a")["href"]
+
 
 def scrapeStartEnd(soup):
   """ Scrapes ICO start date from ICODrops listing """
@@ -76,8 +97,9 @@ class IcoDrops(Excavator):
         "name" : scrapeName(soup),
         "start" : scrapeStartEnd(soup),
         "end" : scrapeStartEnd(soup),
-        # "site" : scrapeSite(soup), TODO: Does not exist...
-        "description" : scrapeDescription(soup)
+        # "site" : scrapeSite(soup), # TODO: Migration to remove this field
+        "description" : scrapeDescription(soup),
+        "price" : scrapePrice(soup)
       })
 
 
