@@ -15,8 +15,7 @@ def scrapeDescription(soup):
     .find("div", attrs = { "class" : "ico-main-info" }) \
     .text \
     .replace("\n", " ") \
-    .replace("\r", "") \
-    .replace("\t", "") \
+    .translate({ ord(x): "" for x in ["\r", "\t" ] }) \
     .strip()
 
 
@@ -46,6 +45,14 @@ def scrapePrice(soup):
   return None
 
 
+def scrapeRaised(soup):
+  """ Scrapes ICO amount raised from ICODrops listing """
+  return soup \
+    .find("div", attrs = { "class" : "money-goal" }) \
+    .text \
+    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] })
+
+
 def scrapeSite(soup):
   """ Scrapes ICO website URL from ICODrops listing """
   return soup \
@@ -58,9 +65,7 @@ def scrapeStartEnd(soup):
   token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
   return token_sale[0] \
     .text \
-    .replace("\n", "") \
-    .replace("\r", "") \
-    .replace("\t", "") \
+    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
     .replace("Token Sale: ", "")
 
 
@@ -99,7 +104,8 @@ class IcoDrops(Excavator):
         "end" : scrapeStartEnd(soup),
         # "site" : scrapeSite(soup), # TODO: Migration to remove this field
         "description" : scrapeDescription(soup),
-        "price" : scrapePrice(soup)
+        "price" : scrapePrice(soup),
+        "raised" : scrapeRaised(soup),
       })
 
 
