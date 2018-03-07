@@ -3,7 +3,7 @@
 """Template SqlAlchemy Schema"""
 
 from datetime import datetime
-from sqlalchemy import BOOLEAN, Column, create_engine, FLOAT, Integer, \
+from sqlalchemy import Column, create_engine, FLOAT, Integer, \
   String, TEXT, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -25,7 +25,7 @@ class Template(Base):
   description = Column( TEXT, nullable = False )
   report = Column( TEXT, nullable = False )
   price = Column( FLOAT(20), nullable = False )
-  raised = Column( BOOLEAN, nullable = False )
+  raised = Column( Integer, nullable = False )
   presale_start = Column( TIMESTAMP, nullable = False )
   presale_end = Column( TIMESTAMP, nullable = False )
   token_symbol = Column( String(20), nullable = False )

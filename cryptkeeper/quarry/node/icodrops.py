@@ -1,5 +1,8 @@
 """ ICODrops Excavator """
 
+# Core Dependencies
+from datetime import datetime
+
 # External Dependencies
 from bs4 import BeautifulSoup
 
@@ -18,6 +21,19 @@ def scrapeDescription(soup):
     .translate({ ord(x): "" for x in ["\r", "\t" ] }) \
     .strip() \
     .split("  ", 1)[-1]
+
+
+def scrapeEnd(soup):
+  """ Scrapes ICO end date from ICODrops listing """
+  year = str(datetime.now().year)
+  token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
+  date_string = token_sale[0] \
+    .text \
+    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
+    .replace("Token Sale: ", "") \
+    .split(" – ")[-1] \
+
+  return datetime.strptime(date_string + " " + year, "%d %b %Y").timestamp()
 
 
 def scrapeName(soup):
@@ -61,13 +77,17 @@ def scrapeSite(soup):
     .find("a")["href"]
 
 
-def scrapeStartEnd(soup):
+def scrapeStart(soup):
   """ Scrapes ICO start date from ICODrops listing """
+  year = str(datetime.now().year)
   token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
-  return token_sale[0] \
+  date_string = token_sale[0] \
     .text \
     .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
-    .replace("Token Sale: ", "")
+    .replace("Token Sale: ", "") \
+    .split(" – ")[0] \
+
+  return datetime.strptime(date_string + " " + year, "%d %b %Y").timestamp()
 
 
 def scrapeSymbol(soup):
@@ -104,6 +124,7 @@ class IcoDrops(Excavator):
 
     else:
       self.__fetchIcoData()
+      # self.__sanitizeIcoData()
 
 
   # Private Methods
@@ -117,14 +138,14 @@ class IcoDrops(Excavator):
 
       self.raw_ico_data.append({
         "name" : scrapeName(soup),
-        "start" : scrapeStartEnd(soup),
-        "end" : scrapeStartEnd(soup),
+        "start" : scrapeStart(soup),
+        "end" : scrapeEnd(soup),
         # "site" : scrapeSite(soup), # TODO: Migration to remove this field
         "description" : scrapeDescription(soup),
         "price" : scrapePrice(soup),
         "raised" : scrapeRaised(soup),
-        "presale_start" : scrapeStartEnd(soup),
-        "presale_end" : scrapeStartEnd(soup),
+        "presale_start" : scrapeStart(soup),
+        "presale_end" : scrapeEnd(soup),
         "token_symbol" : scrapeSymbol(soup)
       })
 
