@@ -9,10 +9,38 @@ import cryptkeeper.util.util as Util
 
 
 # Scraping Functions
+def scrapeDescription(soup):
+  """ Scrapes ICO description from ICODrops listing """
+  return soup \
+    .find("div", attrs = { "class" : "ico-main-info" }) \
+    .text \
+    .replace("\n", " ") \
+    .replace("\r", "") \
+    .replace("\t", "") \
+    .strip()
+
+
 def scrapeName(soup):
   """ Scrapes ICO name from ICODrops listing """
-  main_info = soup.find("div", attrs = { "class" : "ico-main-info" })
-  return main_info.find("h3").text
+  return soup \
+    .find("div", attrs = { "class" : "ico-main-info" }) \
+    .find("h3").text
+
+def scrapeSite(soup):
+  """ Scrapes ICO website URL from ICODrops listing """
+  return soup \
+    .find("div", attrs = { "class" : "ico-right-col" }) \
+    .find("a")["href"]
+
+def scrapeStartEnd(soup):
+  """ Scrapes ICO start date from ICODrops listing """
+  token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
+  return token_sale[0] \
+    .text \
+    .replace("\n", "") \
+    .replace("\r", "") \
+    .replace("\t", "") \
+    .replace("Token Sale: ", "")
 
 
 # Public Entities
@@ -23,10 +51,10 @@ class IcoDrops(Excavator):
 
   def __init__(self):
     # TODO: Uncomment when ready for real deal
-    # super(IcoDrops, self).__init__(self.__fetchIcoUrls())
-    self.ico_data = []
+    # super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
     yeah = self.__fetchIcoUrls()
-    super(IcoDrops, self).__init__([ yeah[0] ], True, True)
+    super(IcoDrops, self).__init__([ yeah[0], yeah[1], yeah[2] ], True, True)
+    self.raw_ico_data = []
 
     if not self.urls:
       print("IcoDrops: No URLs to mine...")
@@ -37,14 +65,19 @@ class IcoDrops(Excavator):
 
   # Private Methods
   def __fetchIcoData(self):
+    """ Fetch metadata specific to each ICO """
     # Filter out non-HTML responses
     self.data = list(filter(Util.isHtml, self.data))
 
     for data in self.data:
       soup = BeautifulSoup(data["content"], "html.parser")
 
-      self.ico_data.append({
-        "name" : scrapeName(soup)
+      self.raw_ico_data.append({
+        "name" : scrapeName(soup),
+        "start" : scrapeStartEnd(soup),
+        "end" : scrapeStartEnd(soup),
+        # "site" : scrapeSite(soup), TODO: Does not exist...
+        "description" : scrapeDescription(soup)
       })
 
 

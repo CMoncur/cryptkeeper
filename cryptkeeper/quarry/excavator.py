@@ -51,7 +51,19 @@ def fetch(url, cf, session):
 
 # Public Entities
 class Excavator:
-  """ Scrape web page from supplied URL """
+  """
+  Scrape web page from supplied URL
+
+  Parameters:
+  1) URLs: URLs to be excavated.
+  2) CF: Whether or not the source URLs are protected by CloudFlare. This is
+     important because Excavator will need to use CfScrape to bypass DDoS
+     protection in the event that the URLs are from a CloudFlare source.
+  3) Run Async: Whether or not Excavator will run asynchronously. Asynchronous
+     enabled excavators run much faster than those run in series.
+  4) Threads: How many worker threads the excavator will use in Asynchronous
+     mode.
+  """
 
   def __init__(self, urls, cf, run_async, threads = cpu_count()):
     self.cf = cf
