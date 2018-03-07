@@ -11,6 +11,20 @@ from cryptkeeper.quarry.excavator import Excavator
 import cryptkeeper.util.util as Util
 
 
+# Sanitization Functions
+def containsAllData(entry):
+  """ Ensures ICODrops entry contains all data needed to be stored """
+  return isinstance(entry["name"], str) \
+    and isinstance(entry["start"], float) \
+    and isinstance(entry["end"], float) \
+    and isinstance(entry["description"], str) \
+    and isinstance(entry["price"], str) \
+    and isinstance(entry["raised"], int) \
+    and isinstance(entry["presale_start"], float) \
+    and isinstance(entry["presale_end"], float) \
+    and isinstance(entry["token_symbol"], str)
+
+
 # Scraping Functions
 def scrapeDescription(soup):
   """ Scrapes ICO description from ICODrops listing """
@@ -64,10 +78,13 @@ def scrapePrice(soup):
 
 def scrapeRaised(soup):
   """ Scrapes ICO amount raised from ICODrops listing """
-  return soup \
+  raised = soup \
     .find("div", attrs = { "class" : "money-goal" }) \
     .text \
-    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] })
+    .translate({ ord(x): "" for x in [ "$", ",", "\n", "\r", "\t" ] })
+
+  return int(raised)
+
 
 
 def scrapeSite(soup):
@@ -118,13 +135,14 @@ class IcoDrops(Excavator):
     yeah = self.__fetchIcoUrls()
     super(IcoDrops, self).__init__([ yeah[0], yeah[1], yeah[2] ], True, True)
     self.raw_ico_data = []
+    self.sanitized_ico_data = []
 
     if not self.urls:
       print("IcoDrops: No URLs to mine...")
 
     else:
       self.__fetchIcoData()
-      # self.__sanitizeIcoData()
+      self.__sanitizeIcoData()
 
 
   # Private Methods
@@ -180,3 +198,7 @@ class IcoDrops(Excavator):
           ico_urls.append(a["href"])
 
     return ico_urls
+
+
+  def __sanitizeIcoData(self):
+    self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
