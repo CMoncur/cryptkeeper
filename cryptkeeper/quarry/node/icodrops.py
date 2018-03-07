@@ -83,6 +83,8 @@ def scrapeSymbol(soup):
         .text \
         .replace("Ticker: ", "")
 
+  return None
+
 
 # Public Entities
 class IcoDrops(Excavator):

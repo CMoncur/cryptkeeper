@@ -21,7 +21,6 @@ class IcoDrops(Base):
   name = Column( String(100), nullable = False )
   start = Column( TIMESTAMP, nullable = False )
   end = Column( TIMESTAMP, nullable = False )
-  site = Column( String(100), nullable = False )
   description = Column( TEXT, nullable = False )
   price = Column( String(20), nullable = False )
   raised = Column( BOOLEAN, nullable = False )
