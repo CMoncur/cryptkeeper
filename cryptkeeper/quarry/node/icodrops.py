@@ -16,7 +16,8 @@ def scrapeDescription(soup):
     .text \
     .replace("\n", " ") \
     .translate({ ord(x): "" for x in ["\r", "\t" ] }) \
-    .strip()
+    .strip() \
+    .split("  ", 1)[-1]
 
 
 def scrapeName(soup):
@@ -27,16 +28,16 @@ def scrapeName(soup):
 
 
 def scrapePrice(soup):
-  """ Scrapes ICO proce from ICODrops listing """
+  """ Scrapes ICO price from ICODrops listing """
   li = soup.findAll("li")
-
 
   for idx, yeah in enumerate(li):
     span = yeah.find("span", attrs = { "class" : "grey" })
 
     if span and "Token Price" in span.text:
       # Return only first match
-      return li[idx].text \
+      return li[idx] \
+        .text \
         .split(" = ")[-1] \
         .split(" (")[0] \
         .replace("\xa0", " ") # Replace space character code with a space...
@@ -67,6 +68,20 @@ def scrapeStartEnd(soup):
     .text \
     .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
     .replace("Token Sale: ", "")
+
+
+def scrapeSymbol(soup):
+  """ Scrapes ICO symbol from ICODrops listing """
+  li = soup.findAll("li")
+
+  for idx, yeah in enumerate(li):
+    span = yeah.find("span", attrs = { "class" : "grey" })
+
+    if span and "Ticker:" in span.text:
+      # Return only first match
+      return li[idx] \
+        .text \
+        .replace("Ticker: ", "")
 
 
 # Public Entities
@@ -106,6 +121,9 @@ class IcoDrops(Excavator):
         "description" : scrapeDescription(soup),
         "price" : scrapePrice(soup),
         "raised" : scrapeRaised(soup),
+        "presale_start" : scrapeStartEnd(soup),
+        "presale_end" : scrapeStartEnd(soup),
+        "token_symbol" : scrapeSymbol(soup)
       })
 
 
