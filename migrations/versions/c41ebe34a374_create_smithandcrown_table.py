@@ -36,8 +36,8 @@ def upgrade():
     Column( "end", TIMESTAMP, nullable = False ),
     Column( "site", String(100), nullable = False ),
     Column( "description", TEXT, nullable = False ),
-    Column( "report", TEXT, nullable = False ),
-    Column( "raised", Integer, nullable = False ),
+    Column( "report", TEXT, nullable = True ),
+    Column( "raised", Integer, nullable = True ),
     Column( "token_symbol", String(20), nullable = False )
   )
 
