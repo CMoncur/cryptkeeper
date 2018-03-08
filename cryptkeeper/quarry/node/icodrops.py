@@ -44,13 +44,18 @@ def scrapeEnd(soup):
   """ Scrapes ICO end date from ICODrops listing """
   year = str(datetime.now().year)
   token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
-  date_string = token_sale[0] \
-    .text \
-    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
-    .replace("Token Sale: ", "") \
-    .split(" – ")[-1] \
 
-  return datetime.strptime(date_string + " " + year, "%d %b %Y")
+  if token_sale:
+    date_string = token_sale[0] \
+      .text \
+      .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
+      .replace("Token Sale: ", "") \
+      .split(" – ")[-1] \
+
+    return datetime.strptime(date_string + " " + year, "%d %b %Y")
+
+  # Catchall in the event this entity was not scraped
+  return None
 
 
 def scrapeName(soup):
@@ -104,13 +109,18 @@ def scrapeStart(soup):
   """ Scrapes ICO start date from ICODrops listing """
   year = str(datetime.now().year)
   token_sale = list(filter(lambda x: "Sale:" in x.text, soup.findAll("h4")))
-  date_string = token_sale[0] \
-    .text \
-    .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
-    .replace("Token Sale: ", "") \
-    .split(" – ")[0] \
 
-  return datetime.strptime(date_string + " " + year, "%d %b %Y")
+  if token_sale:
+    date_string = token_sale[0] \
+      .text \
+      .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
+      .replace("Token Sale: ", "") \
+      .split(" – ")[0] \
+
+    return datetime.strptime(date_string + " " + year, "%d %b %Y")
+
+  # Catchall in the event this entity was not scraped
+  return None
 
 
 def scrapeSymbol(soup):
@@ -140,7 +150,8 @@ class IcoDrops(Excavator):
   URL = "https://icodrops.com"
 
   def __init__(self):
-    super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
+    yeah = self.__fetchIcoUrls()
+    super(IcoDrops, self).__init__([ yeah[ 0 ], yeah[ 1 ] ], True, True)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
