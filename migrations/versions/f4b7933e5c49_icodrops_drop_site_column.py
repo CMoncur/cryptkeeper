@@ -30,5 +30,5 @@ def downgrade():
   """Migration Down"""
   op.add_column(
     TABLE,
-    Column( "site", String(100), nullable = False )
+    Column( "site", String(100), nullable = True )
   )
