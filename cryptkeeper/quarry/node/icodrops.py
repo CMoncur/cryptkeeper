@@ -50,9 +50,14 @@ def scrapeEnd(soup):
       .text \
       .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
       .replace("Token Sale: ", "") \
-      .split(" – ")[-1] \
+      .split(" – ")[0]
 
-    return datetime.strptime(date_string + " " + year, "%d %b %Y")
+    try:
+      return datetime.strptime(date_string + " " + year, "%d %b %Y")
+
+    except ValueError:
+      # Return nothing in event string is still not formatted properly
+      return None
 
   # Catchall in the event this entity was not scraped
   return None
@@ -81,7 +86,12 @@ def scrapePrice(soup):
         .split(" ")[0]
 
       # Return only first match
-      return float(price)
+      try:
+        return float(price)
+
+      except ValueError:
+        # Return nothing in the event type casting fails
+        return None
 
   # Catchall in the event no matches are found
   return None
@@ -94,7 +104,12 @@ def scrapeRaised(soup):
     .text \
     .translate({ ord(x): "" for x in [ "$", ",", "\n", "\r", "\t" ] })
 
-  return int(raised)
+  try:
+    return int(raised)
+
+  except ValueError:
+    # Return nothing in the event type casting fails
+    return None
 
 
 
@@ -115,9 +130,14 @@ def scrapeStart(soup):
       .text \
       .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
       .replace("Token Sale: ", "") \
-      .split(" – ")[0] \
+      .split(" – ")[0]
 
-    return datetime.strptime(date_string + " " + year, "%d %b %Y")
+    try:
+      return datetime.strptime(date_string + " " + year, "%d %b %Y")
+
+    except ValueError:
+      # Return nothing in event string is still not formatted properly
+      return None
 
   # Catchall in the event this entity was not scraped
   return None
@@ -150,8 +170,7 @@ class IcoDrops(Excavator):
   URL = "https://icodrops.com"
 
   def __init__(self):
-    yeah = self.__fetchIcoUrls()
-    super(IcoDrops, self).__init__([ yeah[ 0 ], yeah[ 1 ] ], True, True)
+    super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
