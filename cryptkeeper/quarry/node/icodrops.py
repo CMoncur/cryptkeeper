@@ -140,10 +140,7 @@ class IcoDrops(Excavator):
   URL = "https://icodrops.com"
 
   def __init__(self):
-    # TODO: Uncomment when ready for real deal
-    # super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
-    yeah = self.__fetchIcoUrls()
-    super(IcoDrops, self).__init__([ yeah[0], yeah[1], yeah[2] ], True, True)
+    super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
@@ -169,7 +166,6 @@ class IcoDrops(Excavator):
         "name" : scrapeName(soup),
         "start" : scrapeStart(soup),
         "end" : scrapeEnd(soup),
-        # "site" : scrapeSite(soup), # TODO: Migration to remove this field
         "description" : scrapeDescription(soup),
         "price" : scrapePrice(soup),
         "raised" : scrapeRaised(soup),
