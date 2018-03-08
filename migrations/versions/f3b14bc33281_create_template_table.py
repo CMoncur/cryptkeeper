@@ -37,7 +37,7 @@ def upgrade():
     Column( "site", String(100), nullable = False ),
     Column( "description", TEXT, nullable = False ),
     Column( "report", TEXT, nullable = False ),
-    Column( "price", FLOAT(20), nullable = False ),
+    Column( "price", FLOAT, nullable = False ),
     Column( "raised", Integer, nullable = False ),
     Column( "presale_start", TIMESTAMP, nullable = False ),
     Column( "presale_end", TIMESTAMP, nullable = False ),

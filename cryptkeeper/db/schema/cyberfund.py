@@ -3,7 +3,7 @@
 """Cyber Fund SqlAlchemy Schema"""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, FLOAT, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import TEXT, TIMESTAMP
 
@@ -23,7 +23,7 @@ class CyberFund(Base):
   end = Column( TIMESTAMP, nullable = False )
   site = Column( String(100), nullable = False )
   description = Column( TEXT, nullable = False )
-  price = Column( String(20), nullable = False )
+  price = Column( FLOAT, nullable = False )
   presale_start = Column( TIMESTAMP, nullable = False )
   presale_end = Column( TIMESTAMP, nullable = False )
   token_symbol = Column( String(20), nullable = False )

@@ -24,7 +24,7 @@ class Template(Base):
   site = Column( String(100), nullable = False )
   description = Column( TEXT, nullable = False )
   report = Column( TEXT, nullable = False )
-  price = Column( FLOAT(20), nullable = False )
+  price = Column( FLOAT, nullable = False )
   raised = Column( Integer, nullable = False )
   presale_start = Column( TIMESTAMP, nullable = False )
   presale_end = Column( TIMESTAMP, nullable = False )

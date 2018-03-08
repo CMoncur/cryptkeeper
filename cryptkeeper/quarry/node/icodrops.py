@@ -5,9 +5,12 @@ from datetime import datetime
 
 # External Dependencies
 from bs4 import BeautifulSoup
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 # Internal Dependencies
 from cryptkeeper.quarry.excavator import Excavator
+import cryptkeeper.db.schema.icodrops as Schema
 import cryptkeeper.util.util as Util
 
 
@@ -15,13 +18,13 @@ import cryptkeeper.util.util as Util
 def containsAllData(entry):
   """ Ensures ICODrops entry contains all data needed to be stored """
   return isinstance(entry["name"], str) \
-    and isinstance(entry["start"], float) \
-    and isinstance(entry["end"], float) \
+    and isinstance(entry["start"], datetime) \
+    and isinstance(entry["end"], datetime) \
     and isinstance(entry["description"], str) \
-    and isinstance(entry["price"], str) \
+    and isinstance(entry["price"], float) \
     and isinstance(entry["raised"], int) \
-    and isinstance(entry["presale_start"], float) \
-    and isinstance(entry["presale_end"], float) \
+    and isinstance(entry["presale_start"], datetime) \
+    and isinstance(entry["presale_end"], datetime) \
     and isinstance(entry["token_symbol"], str)
 
 
@@ -47,7 +50,7 @@ def scrapeEnd(soup):
     .replace("Token Sale: ", "") \
     .split(" – ")[-1] \
 
-  return datetime.strptime(date_string + " " + year, "%d %b %Y").timestamp()
+  return datetime.strptime(date_string + " " + year, "%d %b %Y")
 
 
 def scrapeName(soup):
@@ -65,12 +68,15 @@ def scrapePrice(soup):
     span = yeah.find("span", attrs = { "class" : "grey" })
 
     if span and "Token Price" in span.text:
-      # Return only first match
-      return li[idx] \
+      price = li[idx] \
         .text \
         .split(" = ")[-1] \
         .split(" (")[0] \
-        .replace("\xa0", " ") # Replace space character code with a space...
+        .replace("\xa0", " ") \
+        .split(" ")[0]
+
+      # Return only first match
+      return float(price)
 
   # Catchall in the event no matches are found
   return None
@@ -104,7 +110,7 @@ def scrapeStart(soup):
     .replace("Token Sale: ", "") \
     .split(" – ")[0] \
 
-  return datetime.strptime(date_string + " " + year, "%d %b %Y").timestamp()
+  return datetime.strptime(date_string + " " + year, "%d %b %Y")
 
 
 def scrapeSymbol(soup):
@@ -127,6 +133,10 @@ def scrapeSymbol(soup):
 class IcoDrops(Excavator):
   """ ICODrops Excavator Class """
 
+  # TODO: Place connection string in environments file
+  PSQL_CONN = "postgresql+psycopg2://test:test@localhost:5432/cryptkeeper_raw"
+  ENGINE = create_engine(PSQL_CONN)
+  SESSION = Session(bind = ENGINE)
   URL = "https://icodrops.com"
 
   def __init__(self):
@@ -143,6 +153,7 @@ class IcoDrops(Excavator):
     else:
       self.__fetchIcoData()
       self.__sanitizeIcoData()
+      self.__storeIcoData()
 
 
   # Private Methods
@@ -202,3 +213,23 @@ class IcoDrops(Excavator):
 
   def __sanitizeIcoData(self):
     self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
+
+
+  def __storeIcoData(self):
+    # listings = []
+    #
+    # for data in self.sanitized_ico_data:
+    #   listings.append(Schema.IcoDrops(
+    #     name = data["name"],
+    #     start = data["start"],
+    #     end = data["end"],
+    #     description = data["description"],
+    #     price = data["price"],
+    #     raised = data["raised"],
+    #     presale_start = data["presale_start"],
+    #     presale_end = data["presale_end"],
+    #     token_symbol = data["token_symbol"]
+    #   ))
+
+    self.SESSION.bulk_insert_mappings(Schema.IcoDrops, self.sanitized_ico_data)
+    self.SESSION.commit()
