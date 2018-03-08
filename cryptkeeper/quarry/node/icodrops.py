@@ -212,20 +212,5 @@ class IcoDrops(Excavator):
 
 
   def __storeIcoData(self):
-    # listings = []
-    #
-    # for data in self.sanitized_ico_data:
-    #   listings.append(Schema.IcoDrops(
-    #     name = data["name"],
-    #     start = data["start"],
-    #     end = data["end"],
-    #     description = data["description"],
-    #     price = data["price"],
-    #     raised = data["raised"],
-    #     presale_start = data["presale_start"],
-    #     presale_end = data["presale_end"],
-    #     token_symbol = data["token_symbol"]
-    #   ))
-
     self.SESSION.bulk_insert_mappings(Schema.IcoDrops, self.sanitized_ico_data)
     self.SESSION.commit()
