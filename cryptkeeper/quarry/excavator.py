@@ -48,6 +48,10 @@ def fetch(url, cf, session):
   except HttpError.TooManyRedirects as err:
     print("Too many redirects fetching %s: %s" % (url, err))
 
+  # Catching all errors so that the program does not stop
+  except err:
+    print("There was an error with the HTTP request for %s: %s" % (url, err))
+
 
 # Public Entities
 class Excavator:
