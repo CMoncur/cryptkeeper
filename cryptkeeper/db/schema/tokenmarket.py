@@ -21,5 +21,5 @@ class TokenMarket(Base):
   name = Column( String(100), nullable = False )
   start = Column( TIMESTAMP, nullable = False )
   end = Column( TIMESTAMP, nullable = False )
-  site = Column( String(100), nullable = False )
+  site = Column( String(200), nullable = False )
   token_symbol = Column( String(20), nullable = False )

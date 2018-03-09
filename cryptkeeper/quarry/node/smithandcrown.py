@@ -36,6 +36,12 @@ def scrapeName(soup):
     .strip()
 
 
+def scrapeSite(soup):
+  """ Scrapes ICO site URL from SmithAndCrown listing """
+  print(soup["data-url"])
+  return soup["data-url"]
+
+
 def scrapeStart(soup):
   """ Scrapes ICO start date from SmithAndCrown listing """
   date_string = soup \
@@ -43,8 +49,6 @@ def scrapeStart(soup):
     .text \
     .translate({ ord(x): "" for x in [ "\n", "\r", "\t" ] }) \
     .strip()
-
-  print(datetime.strptime(date_string, "%b %d, %Y"))
 
   return datetime.strptime(date_string, "%b %d, %Y")
 
@@ -72,6 +76,7 @@ class SmithAndCrown(Excavator):
           "name" : scrapeName(data),
           "start" : scrapeStart(data),
           "end" : scrapeEnd(data),
+          "site" : scrapeSite(data)
         })
 
     else:

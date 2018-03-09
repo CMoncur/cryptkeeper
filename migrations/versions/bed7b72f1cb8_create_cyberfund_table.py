@@ -13,7 +13,7 @@ from datetime import datetime
 
 # Other Dependencies
 from alembic import op
-from sqlalchemy import BOOLEAN, Column, FLOAT, Integer, String, TEXT, TIMESTAMP
+from sqlalchemy import Column, FLOAT, Integer, String, TEXT, TIMESTAMP
 
 
 # Revision identifiers, used by Alembic.
@@ -34,7 +34,7 @@ def upgrade():
     Column( "name", String(100), nullable = False ),
     Column( "start", TIMESTAMP, nullable = False ),
     Column( "end", TIMESTAMP, nullable = False ),
-    Column( "site", String(100), nullable = False ),
+    Column( "site", String(200), nullable = False ),
     Column( "description", TEXT, nullable = False ),
     Column( "price", FLOAT(20), nullable = False ),
     Column( "presale_start", TIMESTAMP, nullable = False ),

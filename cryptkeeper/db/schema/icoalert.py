@@ -21,7 +21,7 @@ class IcoAlert(Base):
   name = Column( String(100), nullable = False )
   start = Column( TIMESTAMP, nullable = False )
   end = Column( TIMESTAMP, nullable = False )
-  site = Column( String(100), nullable = False )
+  site = Column( String(200), nullable = False )
   description = Column( TEXT, nullable = False )
   presale_start = Column( TIMESTAMP, nullable = False )
   presale_end = Column( TIMESTAMP, nullable = False )

@@ -34,7 +34,7 @@ def upgrade():
     Column( "name", String(100), nullable = False ),
     Column( "start", TIMESTAMP, nullable = False ),
     Column( "end", TIMESTAMP, nullable = False ),
-    Column( "site", String(100), nullable = False ),
+    Column( "site", String(200), nullable = False ),
     Column( "description", TEXT, nullable = False ),
     Column( "token_symbol", String(20), nullable = False ),
     Column( "platform", String(20), nullable = False )
