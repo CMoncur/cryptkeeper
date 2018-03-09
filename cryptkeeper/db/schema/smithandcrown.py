@@ -14,7 +14,7 @@ class SmithAndCrown(Base):
 
   id = Column( Integer, primary_key = True, autoincrement = True )
   created = Column( TIMESTAMP, nullable = False, default = datetime.now )
-  name = Column( String(100), nullable = False )
+  name = Column( String(100), nullable = False, unique = True )
   start = Column( TIMESTAMP, nullable = False )
   end = Column( TIMESTAMP, nullable = False )
   site = Column( String(200), nullable = False )

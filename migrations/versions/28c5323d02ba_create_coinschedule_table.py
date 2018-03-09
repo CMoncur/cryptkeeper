@@ -31,7 +31,7 @@ def upgrade():
     TABLE,
     Column( "id", Integer, primary_key = True, autoincrement = True ),
     Column( "created", TIMESTAMP, nullable = False, default = datetime.now ),
-    Column( "name", String(100), nullable = False ),
+    Column( "name", String(100), nullable = False, unique = True ),
     Column( "start", TIMESTAMP, nullable = False ),
     Column( "end", TIMESTAMP, nullable = False ),
     Column( "site", String(200), nullable = False ),

@@ -2,6 +2,7 @@
 
 # External Dependencies
 from sqlalchemy import create_engine
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
