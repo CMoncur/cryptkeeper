@@ -5,11 +5,12 @@
 
 # Internal Dependencies
 from cryptkeeper.quarry.node.icodrops import IcoDrops
+from cryptkeeper.quarry.node.smithandcrown import SmithAndCrown
 
 def main():
   """ Entry function """
-  hello = IcoDrops()
-  # print(hello.sanitized_ico_data)
+  # IcoDrops()
+  SmithAndCrown()
 
 if __name__ == "__main__":
   main()
