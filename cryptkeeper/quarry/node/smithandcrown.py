@@ -6,12 +6,25 @@ from datetime import datetime
 # External Dependencies
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 # Internal Dependencies
 from cryptkeeper.quarry.excavator import Excavator
 import cryptkeeper.db.schema.smithandcrown as Schema
 import cryptkeeper.util.util as Util
+
+
+# Sanitization Functions
+def containsAllData(entry):
+  """ Ensures SmithAndCrown entry contains all data needed to be stored """
+  return isinstance(entry["name"], str) \
+    and isinstance(entry["start"], datetime) \
+    and isinstance(entry["end"], datetime) \
+    and isinstance(entry["site"], str) \
+    and isinstance(entry["description"], str) \
+    and (isinstance(entry["raised"], int) or entry["raised"] is None) \
+    and isinstance(entry["token_symbol"], str)
 
 
 # Scraping Functions
@@ -89,6 +102,11 @@ def scrapeStart(soup):
   return datetime.strptime(date_string, "%b %d, %Y")
 
 
+def scrapeSymbol(soup):
+  """ Scrapes ICO symbol from SmithAndCrown listing """
+  return soup["data-shortcode"]
+
+
 # Public Entities
 class SmithAndCrown(Excavator):
   """ SmithAndCrown Excavator Class """
@@ -114,8 +132,27 @@ class SmithAndCrown(Excavator):
           "end" : scrapeEnd(data),
           "site" : scrapeSite(data),
           "description" : scrapeDescription(data),
-          "raised" : scrapeRaised(data)
+          "raised" : scrapeRaised(data),
+          "token_symbol" : scrapeSymbol(data)
         })
+
+      self.__sanitizeIcoData()
+      self.__storeIcoData()
 
     else:
       print("SmithAndCrown: No data to mine...")
+
+
+  def __sanitizeIcoData(self):
+    self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
+
+
+  def __storeIcoData(self):
+    try:
+      self.SESSION.bulk_insert_mappings(
+        Schema.SmithAndCrown, self.sanitized_ico_data
+      )
+      self.SESSION.commit()
+
+    except SQLAlchemyError as err:
+      print("SmithAndCrown: Error storing daata: %s" % (err))
