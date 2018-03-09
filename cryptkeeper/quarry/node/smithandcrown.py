@@ -111,10 +111,6 @@ def scrapeSymbol(soup):
 class SmithAndCrown(Excavator):
   """ SmithAndCrown Excavator Class """
 
-  # TODO: Place connection string in environments file
-  PSQL_CONN = "postgresql+psycopg2://test:test@localhost:5432/cryptkeeper_raw"
-  ENGINE = create_engine(PSQL_CONN)
-  SESSION = Session(bind = ENGINE)
   URL = "https://www.smithandcrown.com/icos/"
 
   def __init__(self):
