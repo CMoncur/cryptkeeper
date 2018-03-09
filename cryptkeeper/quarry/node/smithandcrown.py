@@ -15,6 +15,20 @@ import cryptkeeper.util.util as Util
 
 
 # Scraping Functions
+def scrapeDescription(soup):
+  """ Scrapes ICO description from SmithAndCrown listing """
+  try:
+    return soup \
+      .findAll("td")[2] \
+      .find("p") \
+      .text
+
+  except AttributeError:
+    # In rare cases, there will be no description, and the P tag will be
+    # missing altogether. Therefore, this error catch is necessary.
+    return None
+
+
 def scrapeEnd(soup):
   """ Scrapes ICO end date from SmithAndCrown listing """
   date_string = soup \
@@ -36,9 +50,31 @@ def scrapeName(soup):
     .strip()
 
 
+def scrapeRaised(soup):
+  """ Scrapes ICO raised amount from SmithAndCrown listing """
+  raised = soup \
+    .find("td", attrs = { "class" : "field-raised" }) \
+    .text \
+    .split(" ", 1)[0] \
+    .translate({ ord(x): "" for x in [ "$", ",", "-" ] }) \
+    .replace("N/A", "") \
+    .replace("Canceled", "") \
+    .replace("Refunded", "")
+
+  try:
+    # More often than not, the raised column will be empty.
+    if raised:
+      return int(raised)
+
+    return None
+
+  except ValueError:
+    # Return nothing in the event type casting fails
+    return None
+
+
 def scrapeSite(soup):
   """ Scrapes ICO site URL from SmithAndCrown listing """
-  print(soup["data-url"])
   return soup["data-url"]
 
 
@@ -76,7 +112,9 @@ class SmithAndCrown(Excavator):
           "name" : scrapeName(data),
           "start" : scrapeStart(data),
           "end" : scrapeEnd(data),
-          "site" : scrapeSite(data)
+          "site" : scrapeSite(data),
+          "description" : scrapeDescription(data),
+          "raised" : scrapeRaised(data)
         })
 
     else:
