@@ -112,8 +112,8 @@ class SmithAndCrown(Excavator, Librarian):
   URL = "https://www.smithandcrown.com/icos/"
 
   def __init__(self):
-    Excavator.__init__([ self.URL ], True, True)
-    Librarian.__init__(Schema.SmithAndCrown)
+    Excavator.__init__(self, [ self.URL ], True, True)
+    Librarian.__init__(self, Schema.SmithAndCrown)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
