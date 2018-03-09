@@ -28,6 +28,7 @@ class Librarian:
     thereunto pertaining.
     """
     try:
+      # Catching SqlAlchemy errors so that the program does not halt
       self.SESSION.bulk_insert_mappings(
         self.SCHEMA, items
       )

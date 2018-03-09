@@ -5,12 +5,10 @@ from datetime import datetime
 
 # External Dependencies
 from bs4 import BeautifulSoup
-from sqlalchemy import create_engine
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
 
 # Internal Dependencies
 from cryptkeeper.quarry.excavator import Excavator
+from cryptkeeper.db.librarian import Librarian
 import cryptkeeper.db.schema.smithandcrown as Schema
 import cryptkeeper.util.util as Util
 
@@ -108,13 +106,14 @@ def scrapeSymbol(soup):
 
 
 # Public Entities
-class SmithAndCrown(Excavator):
+class SmithAndCrown(Excavator, Librarian):
   """ SmithAndCrown Excavator Class """
 
   URL = "https://www.smithandcrown.com/icos/"
 
   def __init__(self):
-    super(SmithAndCrown, self).__init__([ self.URL ], True, True)
+    Excavator.__init__([ self.URL ], True, True)
+    Librarian.__init__(Schema.SmithAndCrown)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
@@ -132,23 +131,15 @@ class SmithAndCrown(Excavator):
           "token_symbol" : scrapeSymbol(data)
         })
 
-      self.__sanitizeIcoData()
-      self.__storeIcoData()
+      self.__sanitizeAndStoreIcoData()
 
     else:
       print("SmithAndCrown: No data to mine...")
 
 
-  def __sanitizeIcoData(self):
+  # Private Methods
+  def __sanitizeAndStoreIcoData(self):
     self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
 
-
-  def __storeIcoData(self):
-    try:
-      self.SESSION.bulk_insert_mappings(
-        Schema.SmithAndCrown, self.sanitized_ico_data
-      )
-      self.SESSION.commit()
-
-    except SQLAlchemyError as err:
-      print("SmithAndCrown: Error storing daata: %s" % (err))
+    # Inherited from Librarian class
+    self.bulkInsert(self.sanitized_ico_data)
