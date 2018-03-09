@@ -19,6 +19,5 @@ class SmithAndCrown(Base):
   end = Column( TIMESTAMP, nullable = False )
   site = Column( String(200), nullable = False )
   description = Column( TEXT, nullable = False )
-  report = Column( TEXT, nullable = True )
   raised = Column( Integer, nullable = True )
   token_symbol = Column( String(20), nullable = False )
