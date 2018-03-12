@@ -39,10 +39,29 @@ class Librarian:
       print("Error with bulk insert: %s" % (err))
 
 
-  def bulkUpsert(self, items, unique_fields):
+  def bulkInsertDoNothingOnConflict(self, items, unique_fields):
     """
     Either inserts items into the table of supplied schema or does nothing.
     Requires items to be mapped prior to being passed to this method.
+    """
+    try:
+      statement = postgresql \
+        .insert(self.SCHEMA.__table__) \
+        .values(items) \
+        .on_conflict_do_nothing(index_elements = unique_fields)
+
+      self.SESSION.execute(statement)
+      self.SESSION.commit()
+
+    except SQLAlchemyError as err:
+      print("Error with bulk insert: %s" % (err))
+
+
+  def bulkUpsert(self, items, unique_fields):
+    """
+    Either inserts items into the table of supplied schema or updates
+    conflicting field. Requires items to be mapped prior to being passed to
+    this method.
     """
     try:
       for item in items:
