@@ -9,7 +9,7 @@ from cryptkeeper.quarry.node.smithandcrown import SmithAndCrown
 
 def main():
   """ Entry function """
-  # IcoDrops()
+  IcoDrops()
   SmithAndCrown()
 
 if __name__ == "__main__":
