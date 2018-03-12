@@ -142,4 +142,7 @@ class SmithAndCrown(Excavator, Librarian):
     self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
 
     # Inherited from Librarian class
-    self.bulkInsert(self.sanitized_ico_data)
+    self.bulkInsertDoNothingOnConflict(
+      self.sanitized_ico_data,
+      [ Schema.SmithAndCrown.name.name ]
+    )

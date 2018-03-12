@@ -20,6 +20,7 @@ class Librarian:
     self.SCHEMA = schema
 
 
+  # Public Methods
   def bulkInsert(self, items):
     """
     Inserts a list of items into the table of supplied schema, implementing
@@ -29,19 +30,30 @@ class Librarian:
     thereunto pertaining.
     """
     try:
-      # Catching SqlAlchemy errors so that the program does not halt
       self.SESSION.bulk_insert_mappings(
         self.SCHEMA, items
       )
       self.SESSION.commit()
 
     except SQLAlchemyError as err:
-      print("SmithAndCrown: Error storing daata: %s" % (err))
+      print("Error with bulk insert: %s" % (err))
 
 
-  def bulkUpsert(self):
+  def bulkInsertDoNothingOnConflict(self, items, unique_fields):
     """
-    Either inserts or updates items into the table of supplied schema.
+    Either inserts items into the table of supplied schema or does nothing.
     Requires items to be mapped prior to being passed to this method.
     """
-    print(self.PSQL_CONN)
+    try:
+      statement = postgresql \
+        .insert(self.SCHEMA.__table__) \
+        .values(items) \
+        .on_conflict_do_nothing(
+          index_elements = unique_fields
+        )
+
+      self.SESSION.execute(statement)
+      self.SESSION.commit()
+
+    except SQLAlchemyError as err:
+      print("Error with bulk insert: %s" % (err))
