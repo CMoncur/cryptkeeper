@@ -139,6 +139,10 @@ class SmithAndCrown(Excavator, Librarian):
 
   # Private Methods
   def __sanitizeAndStoreIcoData(self):
+    """
+    Ensures only values with all essential information are included, then
+    upserts data to Postgres.
+    """
     self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
 
     # Inherited from Librarian class

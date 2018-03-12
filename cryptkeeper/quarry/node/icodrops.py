@@ -5,11 +5,10 @@ from datetime import datetime
 
 # External Dependencies
 from bs4 import BeautifulSoup
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
 
 # Internal Dependencies
 from cryptkeeper.quarry.excavator import Excavator
+from cryptkeeper.db.librarian import Librarian
 import cryptkeeper.db.schema.icodrops as Schema
 import cryptkeeper.util.util as Util
 
@@ -160,17 +159,14 @@ def scrapeSymbol(soup):
 
 
 # Public Entities
-class IcoDrops(Excavator):
+class IcoDrops(Excavator, Librarian):
   """ ICODrops Excavator Class """
 
-  # TODO: Place connection string in environments file
-  PSQL_CONN = "postgresql+psycopg2://test:test@localhost:5432/cryptkeeper_raw"
-  ENGINE = create_engine(PSQL_CONN)
-  SESSION = Session(bind = ENGINE)
   URL = "https://icodrops.com"
 
   def __init__(self):
-    super(IcoDrops, self).__init__(self.__fetchIcoUrls(), True, True)
+    Excavator.__init__(self, self.__fetchIcoUrls(), True, True)
+    Librarian.__init__(self, Schema.IcoDrops)
     self.raw_ico_data = []
     self.sanitized_ico_data = []
 
@@ -179,8 +175,7 @@ class IcoDrops(Excavator):
 
     else:
       self.__fetchIcoData()
-      self.__sanitizeIcoData()
-      self.__storeIcoData()
+      self.__sanitizeAndStoreIcoData()
 
 
   # Private Methods
@@ -237,10 +232,15 @@ class IcoDrops(Excavator):
     return ico_urls
 
 
-  def __sanitizeIcoData(self):
+  def __sanitizeAndStoreIcoData(self):
+    """
+    Ensures only values with all essential information are included, then
+    upserts data to Postgres.
+    """
     self.sanitized_ico_data = list(filter(containsAllData, self.raw_ico_data))
 
-
-  def __storeIcoData(self):
-    self.SESSION.bulk_insert_mappings(Schema.IcoDrops, self.sanitized_ico_data)
-    self.SESSION.commit()
+    # Inherited from Librarian class
+    self.bulkUpsert(
+      self.sanitized_ico_data,
+      [ Schema.IcoDrops.name.name ]
+    )
