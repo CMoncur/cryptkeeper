@@ -1,7 +1,10 @@
 """ Librarian (Databasing Utility for Miners) """
 
+# Core Dependencies
+from datetime import datetime, timedelta
+
 # External Dependencies
-from sqlalchemy import create_engine
+from sqlalchemy import and_, create_engine
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -82,3 +85,16 @@ class Librarian:
     except SQLAlchemyError as err:
       self.SESSION.rollback()
       print("Error with bulk upsert: %s" % (err))
+
+
+  def getLastDaysEntries(self):
+    """ Select all entries added in the last day """
+    one_day_ago = datetime.now() - timedelta(days = 1)
+
+    try:
+      return self.SESSION.query(self.SCHEMA).filter(
+        and_(self.SCHEMA.created >= one_day_ago)
+      ).all()
+
+    except SQLAlchemyError as err:
+      print("Error with select query: %s" % (err))
