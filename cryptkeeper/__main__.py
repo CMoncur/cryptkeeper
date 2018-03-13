@@ -6,9 +6,9 @@ import sys
 # Internal Dependencies
 from cryptkeeper.api.emailer import Emailer
 from cryptkeeper.db.librarian import Librarian
-from cryptkeeper.quarry.node.icodrops import IcoDrops
-from cryptkeeper.quarry.node.smithandcrown import SmithAndCrown
 import cryptkeeper.db.schema.smithandcrown as SmithAndCrownSchema
+import cryptkeeper.quarry.node.icodrops as IcoDropsExcavator
+import cryptkeeper.quarry.node.smithandcrown as SmithAndCrownExcavator
 
 
 # Private Entities
@@ -27,9 +27,11 @@ def __getEmailBody():
 # Cryptkeeper entry point
 def main():
   """ Entry function """
-  # IcoDrops()
-  # SmithAndCrown()
+  IcoDropsExcavator.IcoDrops()
+  SmithAndCrownExcavator.SmithAndCrown()
 
+  # The first item in the command line args list is always the path to the
+  # program being run. Excluding that by grabbing the tail of the list.
   args = sys.argv[1:]
   help_text = """
     cryptkeeper expects five command line arguments in the form of:

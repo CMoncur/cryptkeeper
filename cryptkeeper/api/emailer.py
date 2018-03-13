@@ -11,7 +11,7 @@ class Emailer:
   """ Emailer Class (Utility for sending emails) """
 
   def __init__(self, conn_info, recipients, subject = "Cryptkeeper Update"):
-    self.from_addr = "info@hoshogroup.com"
+    self.from_addr = "cryptkeeper@hoshogroup.com"
     self.recipients = recipients
     self.subject = subject
 
