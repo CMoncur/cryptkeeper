@@ -11,12 +11,13 @@ from cryptkeeper.quarry.node.smithandcrown import SmithAndCrown
 import cryptkeeper.db.schema.smithandcrown as SmithAndCrownSchema
 
 
+# Private Entities
 def __getEmailBody():
-  base_email_text = "New ICO listings within the last 24 hours:\n\n"
-  new_icodrops_entries = Librarian(SmithAndCrownSchema.SmithAndCrown) \
+  base_email_text = "New ICO listings discovered within the last 24 hours:\n\n"
+  new_sc_entries = Librarian(SmithAndCrownSchema.SmithAndCrown) \
     .getLastDaysEntries()
 
-  for entry in new_icodrops_entries:
+  for entry in new_sc_entries:
     entry_text = "%s (%s): %s\n" % (entry.name, entry.token_symbol, entry.site)
     base_email_text += entry_text
 
@@ -63,10 +64,8 @@ def main():
       "pw" : args[3]
     }
 
-    print(__getEmailBody())
-
-    # emailer = Emailer(conn_info, args[4])
-    # emailer.sendTextEmail(__getEmailBody())
+    emailer = Emailer(conn_info, args[4])
+    emailer.sendTextEmail(__getEmailBody())
 
 
 if __name__ == "__main__":
