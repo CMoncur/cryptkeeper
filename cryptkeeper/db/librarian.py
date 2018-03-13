@@ -36,6 +36,7 @@ class Librarian:
       self.SESSION.commit()
 
     except SQLAlchemyError as err:
+      self.SESSION.rollback()
       print("Error with bulk insert: %s" % (err))
 
 
@@ -54,6 +55,7 @@ class Librarian:
       self.SESSION.commit()
 
     except SQLAlchemyError as err:
+      self.SESSION.rollback()
       print("Error with bulk insert: %s" % (err))
 
 
@@ -78,4 +80,5 @@ class Librarian:
       self.SESSION.commit()
 
     except SQLAlchemyError as err:
+      self.SESSION.rollback()
       print("Error with bulk upsert: %s" % (err))
